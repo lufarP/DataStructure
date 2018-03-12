@@ -132,5 +132,33 @@ class Trie
 						return false;
 				}
 		}
+	public String getlongestPrefix(String word)
+		{
+			/*
+			 * returns the longest prefix of the string which is also a word in dictionary.
+			 * if no prefix then returns null
+			 */
+			TrieNode current=root;
+			int endIndex=0;
+			int size=word.length();
+			char letter;
+			for(int index=0;index<size;index++)
+				{
+					letter=word.charAt(index);
+					if(current.character.containsKey(letter))
+						{
+							if(current.isWordComplete)
+								endIndex=index;
+							current=current.character.get(letter);
+						}
+					else
+						break;
+				}
+			if(endIndex==0)//no prefix found
+				return null;
+			else
+				return word.substring(0, endIndex);
+		}
+
 
 }
