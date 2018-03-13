@@ -182,6 +182,8 @@ class MinHeap
 	}
 	public String toString()
 	{
+		if(heapSize==0)
+		return "[]";
 		StringBuilder string=new StringBuilder("[");
 		for(int index=0;index<heapSize-1;index++)
 		{
