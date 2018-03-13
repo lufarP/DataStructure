@@ -28,6 +28,13 @@ class MinHeap
 	{
 		return heapSize;
 	}
+	
+	
+  	  public boolean isEmpty()
+	{
+		return heapSize==0;
+	}
+
 
 	private int getLeftChildIndex(int parentIndex)
 	{
