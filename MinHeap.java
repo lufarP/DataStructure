@@ -151,7 +151,7 @@ class MinHeap
 			return item;
 		}
 	}
-	public void addValue(long value)
+	public void add(long value)
 	{
 		ensureExtraCapacity();
 		heap[heapSize]=value;
@@ -160,6 +160,9 @@ class MinHeap
 	}
 	private void deleteKey(int index)
 	{
+		
+		if(heapSize==0)
+		    throw new IllegalStateException("Heap is empty");
 		if(index>=heapSize)
 			throw  new IllegalStateException("Index not found");
 		heap[index]=Long.MIN_VALUE;
