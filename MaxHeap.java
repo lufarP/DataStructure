@@ -168,6 +168,8 @@ class MaxHeap
 
     public void deleteValue(long value)
     {
+        if(heapSize==0)
+            throw new IllegalStateException("Heap is empty");
         int index;
         for( index=0;index<heapSize;index++)
         {
