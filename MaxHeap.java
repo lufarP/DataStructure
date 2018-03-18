@@ -186,6 +186,73 @@ class MaxHeap
     {
         return heapSize==0;
     }
+    private static void heapify(int arr[], int n, int i)  
+		{
+			if(i>=n-1)
+				return;
+			else
+				{
+					int left=i*2+1;
+					int right=i*2+2;
+					int maxi=i;
+					if(left<n && arr[maxi]<arr[left])
+						maxi=left;
+					if(right<n && arr[maxi]<arr[right])
+						maxi=right;
+					if(maxi!=i)
+						{
+							swap(arr,i,maxi);
+						heapify(arr,n,maxi);
+						}
+					return;
+				}
+		}
+	public static void heapSort(int arr[], int n) 
+		{
+			buildHeap(arr, n);
+			for (int i=n-1; i>=0; i--)  
+				{
+					swap(arr,0, i);
+					heapify(arr, i, 0);
+				}
+		} 
+	private static void swap(int arr[],int i,int j)
+		{
+			int temp=arr[i];
+			arr[i]=arr[j];
+			arr[j]=temp;
+		}
+	// Rearranges input array so that it becomes a max heap
+	private static void buildHeap(int arr[], int n)  
+		{
+			for(int i=n;i>=0;i++)
+				heapify(arr,n,i);
+			
+		}
+	
+	public static boolean isMaxHeap(int arr[])
+		{
+			return isMaxHeap(arr, 0);
+		}
+	
+	private static boolean isMaxHeap(int arr[],int index)
+		{
+			if(index>=arr.length)
+				return true;
+			int leftIndex,rightIndex;
+			leftIndex=index*2+1;
+			rightIndex=index*2+2;
+			if(leftIndex>=arr.length)
+				return true;
+			else if(arr[leftIndex]>arr[index])
+				return false;
+			else if(rightIndex < arr.length && arr[rightIndex]>arr[index] )
+				return false;
+			else
+				return isMaxHeap(arr,leftIndex) && isMaxHeap(arr, rightIndex);
+			
+		}
+	
 
     public String toString()
     {
