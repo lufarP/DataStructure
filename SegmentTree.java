@@ -17,7 +17,7 @@ abstract class SegmentTree
 		
 		height=(int)(Math.ceil(Math.log(element)/Math.log(2)));
 		
-		size=2*(int)Math.pow(height, 2);
+		size=2*(int)Math.pow(2, height);
 		
 		tree=new int[size];
 		
