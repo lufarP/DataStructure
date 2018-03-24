@@ -1,15 +1,17 @@
 
+
 import java.util.Arrays;
 
-abstract class SegmentTree 
+abstract class SegmentTree <T,V>
 {
-	private int tree[];
-	private int arr[];
+	private T tree[];
+	private V arr[];
 	private final int height;
 	private final int size;
 	private final int element;
 
-	SegmentTree(int arr[])
+	@SuppressWarnings("unchecked")
+	SegmentTree(V arr[])
 	{
 		element=arr.length;
 		
@@ -17,33 +19,36 @@ abstract class SegmentTree
 		
 		height=(int)(Math.ceil(Math.log(element)/Math.log(2)));
 		
-		size=2*(int)Math.pow(2, height);
+		size=2*(int)Math.pow(2, height)-1;
 		
-		tree=new int[size];
+		tree=(T[])new Object[size];
 		
-		buildSegmentTree(0,element-1,1);
+		buildSegmentTree(0,element-1,0);
 	}
-	private void update(int index,int start,int end,int queryStart,int queryEnd,int value)
+	private void update(int index,int start,int end,int queryStart,int queryEnd)
 	{
 		int overlapValue=overLap(start, end, queryStart, queryEnd);
+
+		int mid=start+(end-start)/2;
 		switch(overlapValue)
 		{
 		case 0:
 			break;
 		case 1:
-			tree[index]=value;
+			tree[index]=leaf(arr[start]);
 			break;
 		case 2:
-			update(index*2, start, (start+end)/2, queryStart, queryEnd,value);
-			update(index*2+1, (start+end)/2+1,end, queryStart, queryEnd,value);
-			tree[index]= process(tree[index*2],tree[index*2+1]);
+
+			update(index*2+1, start, mid, queryStart, queryEnd);
+			update(index*2+1+1, mid+1,end, queryStart, queryEnd);
+			tree[index]= process(tree[index*2+1],tree[index*2+1+1]);
 			break;
 		}
 	}
-	public void update(int index,int value)
+	public void update(int index,V value)
 	{
 		arr[index]=value;
-		update(1, 0, element-1, index, index, value);
+		update(0, 0, element-1, index, index);
 	}
 
 	private void buildSegmentTree(int start, int end, int index)
@@ -52,24 +57,29 @@ abstract class SegmentTree
 			return;
 		else if(start==end)
 		{
-			tree[index]=arr[start];
+			tree[index]=leaf(arr[start]);
 		}
-		else
+		else 
 		{
-			int mid=(start+end)/2;
-			buildSegmentTree( start, mid, index*2);
-			buildSegmentTree( mid+1, end, index*2+1);
-			tree[index]=process(tree[index*2],tree[index*2+1]);
+			int mid=start+(end-start)/2;
+			buildSegmentTree( start, mid, index*2+1);
+			buildSegmentTree( mid+1, end, index*2+1+1);
+			tree[index]=process(tree[index*2+1],tree[index*2+1+1]);
 		}
 	}
+	public abstract T leaf(V v) ;
+	
 	private int overLap(int start,int end,int queryStart,int queryEnd)
 	{
-		if(end<queryStart ||start>queryEnd)//no overlap
-			return 0;
-		else if(queryStart<=start && end<=queryEnd )//full overlap
+		int mid=getMid(start,end);
+		if(queryStart<=start && end<=queryEnd )//full overlap
 			return 1;
-		else
-			return 2;//partial overlap
+		else if(mid>=queryEnd)
+			return 2;
+		else if(mid < queryStart)
+			return 3;
+		else 
+			return 4;
 	}
 	/*
 	 * define this method 
@@ -79,42 +89,47 @@ abstract class SegmentTree
 	 * return -infinity when max range
 	 *  ;)
 	 */
-	public abstract int joker();
 
-	private int getResult(int index,int start,int end,int queryStart,int queryEnd)
+	private T getResult(int index,int start,int end,int queryStart,int queryEnd)
 	{
 		int overlapValue=overLap(start, end, queryStart, queryEnd);
+
+		int mid=getMid(start,end);
 		switch(overlapValue)
 		{
-		case 0:
-			return joker();
 		case 1:
 			return tree[index];
 		case 2:
-			int left=getResult(index*2, start, (start+end)/2, queryStart, queryEnd);
-			int right=getResult(index*2+1, (start+end)/2+1,end, queryStart, queryEnd);
+				return getResult(index*2+1, start, mid, queryStart, queryEnd);
+		case 3:
+				return getResult(index*2+1+1, mid+1,end, queryStart, queryEnd);
+		case 4:
+			T left=getResult(index*2+1, start, mid, queryStart, queryEnd);
+			T right=getResult(index*2+1+1, mid+1,end, queryStart, queryEnd);
 			return process(left,right);
 		}
-		return 0;
+		return null;
 	}
 
-	public int getResult(int queryStart,int queryEnd)
+	private int getMid(int start, int end) {
+		// TODO Auto-generated method stub
+		return (start+end)/2;
+	}
+	public T getResult(int queryStart,int queryEnd)
 	{
-		return getResult(1, 0, element-1, queryStart, queryEnd);
+		return getResult(0, 0, element-1, queryStart, queryEnd);
 	}
 	/* define this method
 	 * as the relation between two child of the root node
 
 	 */
 
-	public abstract int process(int left, int right);
+	public abstract T process(T left, T right);
 
 	@Override
 	public String toString() 
 	{
 		return Arrays.toString(tree);
 	}
-
-
 
 }
