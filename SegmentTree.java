@@ -50,6 +50,15 @@ abstract class SegmentTree < T , V >
 			break;
 		}
 	}
+		
+	public void update(int queryStart,int queryEnd,V x)
+	{
+		for(int index=queryStart;index<=queryEnd;index++)
+				arr[index]=updateAtLeaf(index,x);
+		update(0,0,ELEMENT-1,queryStart,queryEnd);
+	}
+
+	public abstract V updateAtLeaf(int index, V x);
 	private int getLeftIndex(int index)
 	{
 		return index*2+1;
