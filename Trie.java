@@ -118,6 +118,7 @@ class Trie
 		{
 			if (index == size)
 				{
+					current.isWordComplete=false;
 					return current.character.size() == 0;
 				} 
 			else
