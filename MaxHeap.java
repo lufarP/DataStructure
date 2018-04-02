@@ -161,7 +161,7 @@ class MaxHeap
         if(index>=heapSize)
             throw  new IllegalStateException("Index not found");
         heap[index]=Long.MAX_VALUE;
-        heapifyUp(heapSize-1);
+        heapifyUp(index);
         extractMaximum();
 
     }
