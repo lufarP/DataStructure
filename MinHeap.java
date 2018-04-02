@@ -166,7 +166,7 @@ class MinHeap
 		if(index>=heapSize)
 			throw  new IllegalStateException("Index not found");
 		heap[index]=Long.MIN_VALUE;
-		heapifyUp(heapSize-1);
+		heapifyUp(index);
 		extractMinimum();
 
 	}
