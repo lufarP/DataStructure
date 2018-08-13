@@ -20,6 +20,14 @@ class  DisjointSet<T>
         }
 
     }
+     public boolean isASet(T data)
+    {
+        return map.containsKey(data);
+    }
+    public int numberOfSets()
+    {
+        return collection.size();
+    }
     public boolean isGroupRepresentative(T data)
     {
         if(map.containsKey(data))
@@ -55,7 +63,7 @@ class  DisjointSet<T>
             parent1.parent=parent2;
             parent2.size+=parent1.size;
 
-            collection.remove(parent1);
+            collection.remove(parent1.data);
         }
         return  true;
     }
@@ -84,6 +92,9 @@ class  DisjointSet<T>
 
     public void makeSet(T data)
     {
+        
+        if(map.containsKey(data))
+            return;
         Node node=new Node(data);
         map.put(data,node);
         collection.add(node.data);
