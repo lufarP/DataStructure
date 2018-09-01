@@ -124,7 +124,7 @@ class Trie
 			else
 				{
 					boolean deletable = deleteWord(word, size, index + 1, current.character.get(word.charAt(index)));
-					if (deletable)
+					if (deletable && !current.isWordComplete)
 						{
 							current.character.remove(word.charAt(index));
 							return current.character.size() == 0;
