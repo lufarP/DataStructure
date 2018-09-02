@@ -1,46 +1,28 @@
 package DataStructure;
 
-import java.util.Arrays;
-import java.util.Comparator;
 
-class Heap<T>
+import java.util.ArrayList;
+
+class Heap<T extends Comparable<T>>
 	{
-		private int capacity;
 		private int heapSize;
-		private T heap[];
-		private Comparator<T> comparisonCriteria;
+		private ArrayList<T> heap;
 		
-		@SuppressWarnings("unchecked")
-		public Heap(Comparator<T> comparisonCriteria)
+		public Heap()
 			{
-				this.capacity=10;
-				heap = (T[]) new Object[capacity];
+				heap= new ArrayList<T>();
 				heapSize=0;
-				this.comparisonCriteria=comparisonCriteria;
-				
 			}
 		
-		@SuppressWarnings("unchecked")
-		public Heap(int capacity,Comparator<T> comparisonCriteria)
+		public Heap(int capacity)
 			{
-				this.capacity=capacity;
-				heap=(T[]) new Object [capacity];
+				heap= new ArrayList<T>(capacity);
 				heapSize=0;
-				this.comparisonCriteria=comparisonCriteria;
-			}
-		
-		
-		public boolean  setComparator(Comparator<T> comparisonCriteria)
-			{
-				if(heapSize>1)
-					return false;
-				this.comparisonCriteria=comparisonCriteria;
-					return true;
 			}
 		
 		public int getHeapSize()
 			{
-				return heapSize;
+				return heap.size();
 			}
 		
 		private int getLeftChildIndex(int parentIndex)
@@ -81,43 +63,40 @@ class Heap<T>
 				else 
 					return false;
 			}
-		
-		@SuppressWarnings("unused")
 		private T getLeftChild(int index)
 			{
-				return heap[getLeftChildIndex(index)];
+				return heap.get(getLeftChildIndex(index));
 			}
 		
 		private T getRightChild(int index)
 			{
-				return heap[getRightChildIndex(index)];
+				return heap.get(getRightChildIndex(index));
 			}
 		
 		private T getParent(int index)
 			{
-				return heap[getParentIndex(index)];
+				return heap.get(getParentIndex(index));
 			}
 		
 		private void swap(int index1,int index2)
 			{
-				T temp=heap[index1];
-				heap[index1]=heap[index2];
-				heap[index2]=temp;
+				T temp=heap.get(index1);
+				heap.set(index1,heap.get(index2));
+				heap.set(index2,temp);
 			}
 		
-		@SuppressWarnings("unused")
 		private void heapify(int index)
 			{
 				int swapIndex=index;
 				if(hasLeftChild(index))
 					{
 						heapify(getLeftChildIndex(index));
-						swapIndex=swapCiteria(index,getLeftChildIndex(index),comparisonCriteria);
+						swapIndex=swapCiteria(index,getLeftChildIndex(index));
 					}
 				if(hasRightChild(index))
 					{
 						heapify(getRightChildIndex(index));
-						swapIndex=swapCiteria(swapIndex, getRightChildIndex(index), comparisonCriteria);
+						swapIndex=swapCiteria(swapIndex, getRightChildIndex(index));
 					}
 				if(swapIndex!=index)
 					{
@@ -125,29 +104,19 @@ class Heap<T>
 						heapify(swapIndex);
 					}
 				
-			}
-		
-		private void ensureEnoughSpace()
-			{
-				if(heapSize==capacity)
-					{
-						capacity= capacity<<1;
-						heap=Arrays.copyOf(heap,capacity);
-					}
-			}
-		
+			}	
 		private void heapifyUp(int index)
 			{
-				while(hasParent(index) && comparisonCriteria.compare(heap[index],getParent(index)) <=0)
+				while(hasParent(index) && heap.get(index).compareTo(getParent(index)) <=0)
 					{
 						swap(getParentIndex(index),index);
 						index=getParentIndex(index);
 					}
 			}
 		
-		private int swapCiteria(int index1, int index2, Comparator<T> comparisonCriteria)
+		private int swapCiteria(int index1, int index2)
 			{
-				int value=comparisonCriteria.compare(heap[index1], heap[index2]);
+				int value=heap.get(index1).compareTo( heap.get(index2));
 				if(value==-1)
 					return index2;
 				else
@@ -157,30 +126,26 @@ class Heap<T>
 		
 		public void add(T item)
 			{
-				ensureEnoughSpace();
-				heap[heapSize]=item;
-				heapSize++;
-				heapifyUp(heapSize-1);
+			
+				heap.add(item);
+				heapifyUp(heap.size()-1);
 			}
 		
 		public T peek()
 			{
 
-				if(heapSize==0)
+				if(heap.size()==0)
 					throw new IllegalStateException("Heap is Empty");
-				return  heap[0];
+				return  heap.get(0);
 			}
 		
 		public T poll()
 			{
-				if(heapSize==0)
+				if(heap.size()==0)
 					throw new IllegalStateException("Heap is Empty");
-				T item=heap[0];
-				swap(0, heapSize-1);
-				// heap[heapSize--]=null;
-				heapSize--;
+				T item=heap.get(0);
+				swap(0, heap.size()-1);
 				heapifyDown(0);
-				
 				return item;
 				
 			}
@@ -194,9 +159,9 @@ class Heap<T>
 				while(hasLeftChild(index))
 					{
 						swapIndex=getLeftChildIndex(index);
-						if(hasRightChild(index) && comparisonCriteria.compare(getRightChild(index),heap[swapIndex])<0)
+						if(hasRightChild(index) && getRightChild(index).compareTo(heap.get(swapIndex))<0)
 							swapIndex=getRightChildIndex(index);
-						if(comparisonCriteria.compare(heap[swapIndex],heap[index])<0)
+						if(heap.get(swapIndex).compareTo(heap.get(index))<0)
 							{
 								swap(swapIndex,index);
 								index=swapIndex;
@@ -207,16 +172,7 @@ class Heap<T>
 			}
 		public String toString()
 			{
-				
-				if(heapSize==0)
-					return "[]";
-				StringBuilder string=new StringBuilder("[");
-				for(int index=0;index<heapSize-1;index++)
-					{
-						string.append(heap[index]+", ");
-					}
-				string.append(heap[heapSize-1]+"]");
-				return string.toString();
+				return heap.toString();
 			}
 		
 	}	
