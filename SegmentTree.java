@@ -43,21 +43,24 @@ abstract class SegmentTree < T , V >
 			tree[index]=leaf(start);
 			break;
 		case 2:
-
+		case 3:
+		case 4:
 			update(getLeftIndex(index), start, mid, queryStart, queryEnd);
 			update(getRightIndex(index), mid+1,end, queryStart, queryEnd);
 			tree[index]= process(tree[getLeftIndex(index)],tree[getRightIndex(index)]);
 			break;
 		}
 	}
-		
+		//0 based indexing, both inclusive in array arr
 	public void update(int queryStart,int queryEnd,V x)
 	{
 		for(int index=queryStart;index<=queryEnd;index++)
 				arr[index]=updateAtLeaf(index,x);
 		update(0,0,ELEMENT-1,queryStart,queryEnd);
 	}
-
+	/*
+	* changes made at array arr on index with value x, either overwrite or make some delta change e.t.c
+	*/
 	public abstract V updateAtLeaf(int index, V x);
 	private int getLeftIndex(int index)
 	{
@@ -67,6 +70,7 @@ abstract class SegmentTree < T , V >
 	{
 		return index*2+2;
 	}
+	//point update at index of arr which is 0th based, value is overwritten on index of arr;
 	public void update(int index,V value)
 	{
 		arr[index]=value;
@@ -89,28 +93,28 @@ abstract class SegmentTree < T , V >
 			tree[index]=process(tree[getLeftIndex(index)],tree[getRightIndex(index)]);
 		}
 	}
+	/*
+	* value at leaf of segment tree while building
+	* index is 0th based based on arr
+	*/
 	public abstract T leaf(int index) ;
 
 	private int overLap(int start,int end,int queryStart,int queryEnd)
 	{
 		int mid=getMid(start,end);
-		if(queryStart<=start && end<=queryEnd )//full overlap
+		if(end<queryStart ||start>end)//no overlap
+		    return 0;
+		else if(queryStart<=start && end<=queryEnd )//full overlap
 			return 1;
-		else if(mid>=queryEnd)
+		//partial overlap and types
+		else if(mid>=queryEnd)//complete left overlap 
 			return 2;
-		else if(mid < queryStart)
+		else if(mid < queryStart)//complete right overlap
 			return 3;
 		else 
-			return 4;
+			return 4;//mix overlap
 	}
-	/*
-	 * define this method 
-	 * as a value which should pass on when there is no overlapping
-	 * eg. return 0 when sum range
-	 * return infinity when min range
-	 * return -infinity when max range
-	 *  ;)
-	 */
+	
 
 	private T getResult(int index,int start,int end,int queryStart,int queryEnd)
 	{
